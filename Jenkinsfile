@@ -11,41 +11,30 @@ pipeline {
         //AWS_ECS_TD_PROD = 'LearnJenkinsApp-TaskDefinition-Prod'
     }
 
-    tools {
-        maven 'maven3'  // Specify your Maven version
-    }
-
     stages {
         stage('Checkout GitHub Code') {
             steps {
                 git branch: 'main', changelog: false, credentialsId: 'Git-cred', poll: false, url: 'https://github.com/max-az-10/Plato.git'
             }
         }
-        stage('Code compile') {
-            steps {
-                script {
-                    // Compile the project without packaging or testing
-                    echo 'Compiling the project...'
-                    sh 'mvn clean'  // This will clean and compile the source code
-                }
-            }
-        }
-        stage('Build') {
-            steps {
-                script {
-                    // Clean and build the project using Maven
-                    echo 'Building the project...'
-                    sh 'mvn clean install'  // This will clean and build the project
-                }
-            }
-        }
 
-        stage('Test') {
+        stage('Build Docker image') {
+            agent {
+                docker {
+                    image 'nginx:1.27-alpine'
+                    reuseNode true
+                }
+            }
+            
             steps {
-                script {
-                    // Run unit tests with Maven
-                    echo 'Running tests...'
-                    sh 'mvn test'  // Run the tests
+                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    // some block
+                sh '''
+                    echo "Build the Docker image"
+                    docker build -t $AWS_DOCKER_REGISTRY/$APP_NAME:$REACT_APP_VERSION .
+                    aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_DOCKER_REGISTRY
+                    docker push $AWS_DOCKER_REGISTRY/$APP_NAME:$REACT_APP_VERSION
+                '''
                 }
             }
         }
