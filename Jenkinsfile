@@ -21,9 +21,8 @@ pipeline {
         stage('Build Docker image') {
             agent {
                 docker {
-                    image 'nginx:1.27-alpine'
+                    image 'docker:latest' 
                     args '-v /var/run/docker.sock:/var/run/docker.sock'
-                    reuseNode true
                 }
             }
             
@@ -31,6 +30,8 @@ pipeline {
                     // some block
                 sh '''
                     echo "Build the Docker image"
+                    docker build -t plato-image .
+                    docker run -p 8080:80 plato-image
                 '''
             }
         }
