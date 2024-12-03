@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         //REACT_APP_VERSION = "1.0.$BUILD_ID"
-        APP_NAME = 'plano-website'       
+        //APP_NAME = 'plano-website'       
         AWS_DEFAULT_REGION = 'us-west-2'
         //AWS_DOCKER_REGISTRY = '381492139836.dkr.ecr.us-west-2.amazonaws.com'
         //AWS_ECS_CLUSTER = 'LearnJenkinApp-Cluster-Prod'
@@ -13,6 +13,7 @@ pipeline {
 
     tools {
         maven 'Maven 3.8.1'  // Specify your Maven version
+    }
 
     stages {
         stage('Checkout GitHub Code') {
