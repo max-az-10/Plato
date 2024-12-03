@@ -12,7 +12,7 @@ pipeline {
     }
 
     tools {
-        maven 'Maven 3'  // Specify your Maven version
+        maven 'maven3'  // Specify your Maven version
     }
 
     stages {
