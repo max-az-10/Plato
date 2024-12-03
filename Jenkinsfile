@@ -26,7 +26,7 @@ pipeline {
                 script {
                     // Compile the project without packaging or testing
                     echo 'Compiling the project...'
-                    sh 'mvn clean compile -DskipTests=true'  // This will clean and compile the source code
+                    sh 'mvn clean'  // This will clean and compile the source code
                 }
             }
         }
